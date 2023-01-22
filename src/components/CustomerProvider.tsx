@@ -1,22 +1,36 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { CustomerType, type ITransaction } from '@/types';
 import CustomerLedger from '@/data/CustomerLedger.json';
+import { useRouter } from 'next/router';
 
-type CumtomerInfo = Omit<CustomerType, 'pin'>;
+type CustomerInfo = Omit<CustomerType, 'pin'>;
 
-interface CustomerDataProvider {
-    customerInfo: CumtomerInfo;
+interface CustomerDataProvider extends CustomerInfo {
     children: React.ReactNode;
+}
+
+interface CustomerContext extends CustomerInfo {
+    addDeposit: Function;
+    addDebit: Function;
+    getBalance: Function;
+    isUnderWithdrawalTransactionLimit: () => boolean;
 }
 
 const DAILY_DEBIT_TRANSACTION_LIMIT = 3;
 
-export const CustomerContext = createContext({});
+export const CustomerContext = createContext({} as CustomerContext);
 
 export const CustomerProvider: React.FC<CustomerDataProvider> = ({
     children,
-    customerInfo,
 }) => {
+    const router = useRouter();
+
+    const customerInfo = {
+        firstName: router.query.firstName,
+        lastName: router.query.lastName,
+        account: router.query.account,
+    } as Omit<CustomerType, 'pin'>;
+
     const accountTransactions = CustomerLedger.filter(
         (transaction) => transaction.account === customerInfo.account
     );
@@ -87,7 +101,7 @@ export const CustomerProvider: React.FC<CustomerDataProvider> = ({
     };
 
     const customerData = {
-        customerInfo,
+        ...customerInfo,
         addDeposit,
         addDebit,
         getBalance,

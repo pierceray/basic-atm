@@ -1,5 +1,5 @@
 import { CustomerType } from '@/types';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, Grid, TextField, Typography } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -11,6 +11,7 @@ type PinFormInput = {
 export default function Home() {
     const router = useRouter();
     const { control, handleSubmit } = useForm<PinFormInput>();
+
     const onSubmit: SubmitHandler<PinFormInput> = async (data) => {
         const response = await fetch('/api/customer', {
             method: 'POST',
@@ -47,25 +48,31 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <Typography variant="h1">Basic ATM</Typography>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Controller
-                        name="pin"
-                        control={control}
-                        rules={{ required: true, minLength: 4, maxLength: 4 }}
-                        render={({ field }) => (
-                            <TextField
-                                {...field}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                        )}
-                    />
-                    <Button type="submit" variant="contained">
-                        Submit
-                    </Button>
-                </form>
+                <Grid container>
+                    <Typography variant="h1">Basic ATM</Typography>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <Controller
+                            name="pin"
+                            control={control}
+                            rules={{
+                                required: true,
+                                minLength: 4,
+                                maxLength: 4,
+                            }}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                            )}
+                        />
+                        <Button type="submit" variant="contained">
+                            Submit
+                        </Button>
+                    </form>
+                </Grid>
             </main>
         </>
     );

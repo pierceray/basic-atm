@@ -1,0 +1,14 @@
+[
+    {
+        "account": "1",
+        "type": "DEPOSIT",
+        "amount": 1000.0,
+        "date": "2023-01-01T13:48:00.000Z"
+    },
+    {
+        "account": "1",
+        "type": "DEBIT",
+        "amount": 50.0,
+        "date": "2023-01-01T14:48:00.000Z"
+    }
+]
