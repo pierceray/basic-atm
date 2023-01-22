@@ -1,9 +1,8 @@
 [
-	{
-		"firstName": "Ray",
-		"lastName": "Pierce",
-		"account": "1",
-		"pin": "1234"
-	}
+    {
+        "firstName": "Ray",
+        "lastName": "Pierce",
+        "account": "1",
+        "pin": "1234"
+    }
 ]
-
