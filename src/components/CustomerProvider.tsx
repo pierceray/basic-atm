@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CustomerType, type ITransaction } from '@/types';
 import CustomerLedger from '@/data/CustomerLedger.json';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 
 type CustomerInfo = Omit<CustomerType, 'pin'>;
 
@@ -13,10 +14,10 @@ interface CustomerContext extends CustomerInfo {
     addDeposit: Function;
     addDebit: Function;
     getBalance: Function;
-    isUnderWithdrawalTransactionLimit: () => boolean;
+    isUnderWithdrawalAmountLimit: (amount: number) => boolean;
 }
 
-const DAILY_DEBIT_TRANSACTION_LIMIT = 3;
+export const DAILY_DEBIT_AMOUNT_LIMIT = 300;
 
 export const CustomerContext = createContext({} as CustomerContext);
 
@@ -25,16 +26,22 @@ export const CustomerProvider: React.FC<CustomerDataProvider> = ({
 }) => {
     const router = useRouter();
 
+    if (router.pathname === '/') {
+        return <>{children}</>;
+    }
+
     const customerInfo = {
+        account: router.query.account,
         firstName: router.query.firstName,
         lastName: router.query.lastName,
-        account: router.query.account,
     } as Omit<CustomerType, 'pin'>;
 
     const accountTransactions = CustomerLedger.filter(
         (transaction) => transaction.account === customerInfo.account
     );
+
     const [transactions, setTransactions] =
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         useState<ITransaction[]>(accountTransactions);
 
     const getBalance = () => {
@@ -56,40 +63,39 @@ export const CustomerProvider: React.FC<CustomerDataProvider> = ({
     const addDeposit = (amount: number) => {
         const depositTransaction: ITransaction = {
             account: customerInfo.account,
-            amount,
+            amount: Number(amount),
             type: 'DEPOSIT',
-            date: new Date(Date.now()).toISOString(),
+            date: dayjs().toISOString(),
         };
 
-        // using concat because push is mutative
-        setTransactions(transactions.concat(depositTransaction));
+        setTransactions([...transactions, depositTransaction]);
     };
 
     const addDebit = (amount: number) => {
         if (getBalance() - amount < 0) {
-            return new Error('Insufficient Funds');
+            throw new Error('Insufficient Funds');
         }
 
-        if (!isUnderWithdrawalTransactionLimit()) {
-            return new Error('Exceeded Debit Transaction Limit');
+        if (!isUnderWithdrawalAmountLimit(amount)) {
+            throw new Error('Exceeds Debit Amount Limit');
         }
 
         const debitTransaction: ITransaction = {
             account: customerInfo.account,
-            amount,
+            amount: Number(amount),
             type: 'DEBIT',
-            date: new Date(Date.now()).toISOString(),
+            date: dayjs().toISOString(),
         };
 
-        // using concat because push is mutative
-        setTransactions(transactions.concat(debitTransaction));
+        setTransactions([...transactions, debitTransaction]);
     };
 
-    const isUnderWithdrawalTransactionLimit = () => {
-        const numberOfWithdrawals = transactions.reduce(
+    const isUnderWithdrawalAmountLimit = (amount: number) => {
+        const withdrawalAmountToday = transactions.reduce(
             (withdrawal, transaction) => {
-                if (transaction.type === 'DEBIT') {
-                    return withdrawal + 1;
+                const isToday = dayjs().isSame(dayjs(transaction.date), 'day');
+                if (transaction.type === 'DEBIT' && isToday) {
+                    return withdrawal + transaction.amount;
                 } else {
                     return withdrawal;
                 }
@@ -97,7 +103,9 @@ export const CustomerProvider: React.FC<CustomerDataProvider> = ({
             0
         );
 
-        return numberOfWithdrawals <= DAILY_DEBIT_TRANSACTION_LIMIT;
+        const withdrawalAmountTodayTotal = withdrawalAmountToday + amount;
+
+        return withdrawalAmountTodayTotal <= DAILY_DEBIT_AMOUNT_LIMIT;
     };
 
     const customerData = {
@@ -105,7 +113,7 @@ export const CustomerProvider: React.FC<CustomerDataProvider> = ({
         addDeposit,
         addDebit,
         getBalance,
-        isUnderWithdrawalTransactionLimit,
+        isUnderWithdrawalAmountLimit,
     };
 
     return (
