@@ -1,5 +1,4 @@
-import { CustomerType } from '@/types';
-import { Button, Grid, TextField, Typography } from '@mui/material';
+import { Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -48,31 +47,46 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <Grid container>
-                    <Typography variant="h1">Basic ATM</Typography>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Controller
-                            name="pin"
-                            control={control}
-                            rules={{
-                                required: true,
-                                minLength: 4,
-                                maxLength: 4,
-                            }}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                />
-                            )}
-                        />
-                        <Button type="submit" variant="contained">
-                            Submit
-                        </Button>
-                    </form>
-                </Grid>
+                <Box maxWidth="md" sx={{ margin: 'auto' }}>
+                    <Paper sx={{ padding: '2em' }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                <Typography variant="h2">Basic ATM</Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Grid container sx={{ textAlign: 'center' }}>
+                                    <Grid item xs={12}>
+                                        <form onSubmit={handleSubmit(onSubmit)}>
+                                            <Controller
+                                                name="pin"
+                                                control={control}
+                                                rules={{
+                                                    required: true,
+                                                    minLength: 4,
+                                                    maxLength: 4,
+                                                }}
+                                                render={({ field }) => (
+                                                    <TextField
+                                                        {...field}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                            <Button
+                                                type="submit"
+                                                variant="contained"
+                                            >
+                                                Submit
+                                            </Button>
+                                        </form>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+                </Box>
             </main>
         </>
     );
