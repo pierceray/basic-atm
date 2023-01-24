@@ -73,7 +73,7 @@ export default function Home() {
                                 <Grid container sx={{ textAlign: 'center' }}>
                                     <Grid item xs={12}>
                                         <Typography variant="h5" component="p">
-                                            Enter you pin number:
+                                            Enter your pin number:
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
