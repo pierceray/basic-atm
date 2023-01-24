@@ -43,7 +43,10 @@ const Atm = () => {
         try {
             addDebit(Number(data.debitAmount));
         } catch (err: any) {
-            setDebitError('debitAmount', err);
+            setDebitError('debitAmount', {
+                type: 'custom',
+                message: err.message,
+            });
         }
     };
 
@@ -152,12 +155,18 @@ const Atm = () => {
                                                         InputLabelProps={{
                                                             shrink: true,
                                                         }}
+                                                        helperText={
+                                                            debitErrors
+                                                                .debitAmount
+                                                                ?.message
+                                                        }
                                                         {...field}
                                                     />
                                                 )}
                                                 rules={{
                                                     required:
                                                         'This is a required field',
+                                                    // didn't quite figure out how to get a custom message in here
                                                     validate: (value) =>
                                                         isUnderWithdrawalAmountLimit(
                                                             Number(value)
@@ -172,6 +181,7 @@ const Atm = () => {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={12}>
+                                            {/* Made do with this as a client-side validation error */}
                                             {debitErrors.debitAmount &&
                                                 debitErrors.debitAmount.type ===
                                                     'validate' && (

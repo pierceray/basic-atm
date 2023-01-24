@@ -26,9 +26,12 @@ export default function Home() {
 
         const { result } = await response.json();
 
+        // redirects to the ATM page
         if (result) {
             await router.push({
                 pathname: '/atm',
+                // very simplistic way of getting the data to the page
+                // normally I would have used some kind of cookie auth
                 query: {
                     firstName: result.firstName,
                     lastName: result.lastName,
@@ -37,6 +40,7 @@ export default function Home() {
             });
         }
 
+        // sets the error message if the account cannot be found
         setError(
             'pin',
             { type: 'custom', message: 'Unable to find account' },
