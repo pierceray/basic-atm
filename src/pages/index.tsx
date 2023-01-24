@@ -17,6 +17,7 @@ export default function Home() {
     } = useForm<PinFormInput>();
 
     const onSubmit: SubmitHandler<PinFormInput> = async (data) => {
+        // calling the API route I setup to get the account info
         const response = await fetch('/api/customer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -26,7 +27,7 @@ export default function Home() {
         const { result } = await response.json();
 
         if (result) {
-            router.push({
+            await router.push({
                 pathname: '/atm',
                 query: {
                     firstName: result.firstName,
@@ -36,7 +37,11 @@ export default function Home() {
             });
         }
 
-        setError('pin', 'Unable to find account', { shouldFocus: true });
+        setError(
+            'pin',
+            { type: 'custom', message: 'Unable to find account' },
+            { shouldFocus: true }
+        );
     };
 
     return (
@@ -93,6 +98,9 @@ export default function Home() {
                                                             ),
                                                         }}
                                                         error={!!errors.pin}
+                                                        helperText={
+                                                            errors?.pin?.message
+                                                        }
                                                         {...field}
                                                     />
                                                 )}
