@@ -2,16 +2,7 @@ import {
     DAILY_DEBIT_AMOUNT_LIMIT,
     useCustomerData,
 } from '@/components/CustomerProvider';
-import {
-    Box,
-    Button,
-    FilledInput,
-    Grid,
-    InputAdornment,
-    InputLabel,
-    Paper,
-    Typography,
-} from '@mui/material';
+import { Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 interface DepositFormInput {
@@ -32,8 +23,11 @@ const Atm = () => {
         isUnderWithdrawalAmountLimit,
     } = useCustomerData();
 
-    const { handleSubmit: handleDepositSubmit, control: depositControl } =
-        useForm<DepositFormInput>({ mode: 'all' });
+    const {
+        handleSubmit: handleDepositSubmit,
+        formState: { errors: depositErrors },
+        control: depositControl,
+    } = useForm<DepositFormInput>({ mode: 'all' });
     const {
         handleSubmit: handleDebitSubmit,
         control: debitControl,
@@ -75,102 +69,123 @@ const Atm = () => {
                         </Grid>
                     </Grid>
                     <Grid item xs={6}>
-                        <Grid container sx={{ textAlign: 'center' }}>
-                            <Grid item xs={12}>
+                        <Grid container>
+                            <Grid item xs={12} sx={{ marginBottom: '3em' }}>
                                 <form
                                     onSubmit={handleDepositSubmit(
                                         onDepositSubmit
                                     )}
                                 >
-                                    <Controller
-                                        name={'depositAmount'}
-                                        control={depositControl}
-                                        render={({
-                                            field,
-                                            fieldState: { error },
-                                        }) => (
-                                            <>
-                                                <InputLabel htmlFor="filled-adornment-depositamount">
-                                                    Amount to Deposit
-                                                </InputLabel>
-                                                <FilledInput
-                                                    {...field}
-                                                    id="filled-adornment-depositamount"
-                                                    error={!!error?.message}
-                                                    size="small"
-                                                    startAdornment={
-                                                        <InputAdornment position="start">
-                                                            $
-                                                        </InputAdornment>
-                                                    }
-                                                />
-                                            </>
-                                        )}
-                                        rules={{
-                                            required:
-                                                'This is a required field',
-                                        }}
-                                    />
-
-                                    <Button type="submit" variant="contained">
-                                        Deposit
-                                    </Button>
+                                    <Grid container>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            sx={{ marginBottom: '.5em' }}
+                                        >
+                                            <Controller
+                                                name={'depositAmount'}
+                                                control={depositControl}
+                                                render={({ field }) => (
+                                                    <TextField
+                                                        id="adornment-depositamount"
+                                                        label="Amount to Deposit"
+                                                        type="number"
+                                                        fullWidth
+                                                        error={
+                                                            !!depositErrors.depositAmount
+                                                        }
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="contained"
+                                                                >
+                                                                    Deposit
+                                                                </Button>
+                                                            ),
+                                                        }}
+                                                        {...field}
+                                                    />
+                                                )}
+                                                rules={{
+                                                    required:
+                                                        'This is a required field',
+                                                }}
+                                            />
+                                        </Grid>
+                                    </Grid>
                                 </form>
                             </Grid>
                             <Grid item xs={12}>
                                 <form
                                     onSubmit={handleDebitSubmit(onDebitSubmit)}
                                 >
-                                    <Controller
-                                        name={'debitAmount'}
-                                        control={debitControl}
-                                        render={({
-                                            field,
-                                            fieldState: { error },
-                                        }) => (
-                                            <>
-                                                <InputLabel htmlFor="filled-adornment-debitamount">
-                                                    Amount to Withdraw
-                                                </InputLabel>
-                                                <FilledInput
-                                                    {...field}
-                                                    id="filled-adornment-debitamount"
-                                                    error={!!error?.message}
-                                                    startAdornment={
-                                                        <InputAdornment position="start">
-                                                            $
-                                                        </InputAdornment>
-                                                    }
-                                                />
-                                            </>
-                                        )}
-                                        rules={{
-                                            required:
-                                                'This is a required field',
-                                            validate: (value) =>
-                                                isUnderWithdrawalAmountLimit(
-                                                    Number(value)
-                                                ),
-                                        }}
-                                    />
-
-                                    <Button type="submit" variant="contained">
-                                        Withdraw
-                                    </Button>
-                                    <Typography>
-                                        There is a daily withdrawl limit of $
-                                        {DAILY_DEBIT_AMOUNT_LIMIT}
-                                    </Typography>
-                                    {debitErrors.debitAmount &&
-                                        debitErrors.debitAmount.type ===
-                                            'validate' && (
-                                            <Typography
-                                                color="error"
-                                                variant="body1"
-                                            >
-                                                Will exceed daily limit.
+                                    <Grid container>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            sx={{ marginBottom: '.5em' }}
+                                        >
+                                            <Controller
+                                                name={'debitAmount'}
+                                                control={debitControl}
+                                                render={({ field }) => (
+                                                    <TextField
+                                                        id="adornment-debitamount"
+                                                        label="Amount to Withdraw"
+                                                        type="number"
+                                                        fullWidth
+                                                        error={
+                                                            !!debitErrors.debitAmount
+                                                        }
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="contained"
+                                                                >
+                                                                    Withdraw
+                                                                </Button>
+                                                            ),
+                                                        }}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        {...field}
+                                                    />
+                                                )}
+                                                rules={{
+                                                    required:
+                                                        'This is a required field',
+                                                    validate: (value) =>
+                                                        isUnderWithdrawalAmountLimit(
+                                                            Number(value)
+                                                        ),
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Typography variant="subtitle2">
+                                                There is a daily withdrawl limit
+                                                of ${DAILY_DEBIT_AMOUNT_LIMIT}
                                             </Typography>
-                                        )}
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            {debitErrors.debitAmount &&
+                                                debitErrors.debitAmount.type ===
+                                                    'validate' && (
+                                                    <Typography
+                                                        color="error"
+                                                        variant="body1"
+                                                    >
+                                                        Will exceed daily limit.
+                                                    </Typography>
+                                                )}
+                                        </Grid>
+                                    </Grid>
                                 </form>
                             </Grid>
                         </Grid>
