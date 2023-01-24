@@ -9,7 +9,12 @@ type PinFormInput = {
 
 export default function Home() {
     const router = useRouter();
-    const { control, handleSubmit } = useForm<PinFormInput>();
+    const {
+        control,
+        handleSubmit,
+        setError,
+        formState: { errors },
+    } = useForm<PinFormInput>();
 
     const onSubmit: SubmitHandler<PinFormInput> = async (data) => {
         const response = await fetch('/api/customer', {
@@ -30,6 +35,8 @@ export default function Home() {
                 },
             });
         }
+
+        setError('pin', 'Unable to find account', { shouldFocus: true });
     };
 
     return (
@@ -85,6 +92,7 @@ export default function Home() {
                                                                 </Button>
                                                             ),
                                                         }}
+                                                        error={!!errors.pin}
                                                         {...field}
                                                     />
                                                 )}
