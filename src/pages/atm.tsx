@@ -37,6 +37,7 @@ const Atm = () => {
     const {
         handleSubmit: handleDebitSubmit,
         control: debitControl,
+        formState: { errors: debitErrors },
         setError: setDebitError,
     } = useForm<DebitFormInput>({ mode: 'all' });
 
@@ -46,7 +47,7 @@ const Atm = () => {
 
     const onDebitSubmit: SubmitHandler<DebitFormInput> = (data) => {
         try {
-            addDebit(data.debitAmount);
+            addDebit(Number(data.debitAmount));
         } catch (err: any) {
             setDebitError('debitAmount', err);
         }
@@ -146,25 +147,31 @@ const Atm = () => {
                                         rules={{
                                             required:
                                                 'This is a required field',
-                                            validate: {
-                                                withdrawalLimit: (value) => {
-                                                    const isError =
-                                                        isUnderWithdrawalAmountLimit(
-                                                            Number(value)
-                                                        );
-                                                    return isError;
-                                                },
-                                            },
+                                            validate: (value) =>
+                                                isUnderWithdrawalAmountLimit(
+                                                    Number(value)
+                                                ),
                                         }}
                                     />
+
                                     <Button type="submit" variant="contained">
                                         Withdraw
                                     </Button>
+                                    <Typography>
+                                        There is a daily withdrawl limit of $
+                                        {DAILY_DEBIT_AMOUNT_LIMIT}
+                                    </Typography>
+                                    {debitErrors.debitAmount &&
+                                        debitErrors.debitAmount.type ===
+                                            'validate' && (
+                                            <Typography
+                                                color="error"
+                                                variant="body1"
+                                            >
+                                                Will exceed daily limit.
+                                            </Typography>
+                                        )}
                                 </form>
-                                <Typography>
-                                    There is a daily withdrawl limit of $
-                                    {DAILY_DEBIT_AMOUNT_LIMIT}
-                                </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
