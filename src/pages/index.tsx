@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 
 type PinFormInput = {
-    pin: number;
+    pin?: number | string;
 };
 
 export default function Home() {
@@ -56,6 +56,11 @@ export default function Home() {
                             <Grid item xs={12}>
                                 <Grid container sx={{ textAlign: 'center' }}>
                                     <Grid item xs={12}>
+                                        <Typography variant="h5" component="p">
+                                            Enter you pin number:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
                                         <form onSubmit={handleSubmit(onSubmit)}>
                                             <Controller
                                                 name="pin"
@@ -67,19 +72,24 @@ export default function Home() {
                                                 }}
                                                 render={({ field }) => (
                                                     <TextField
-                                                        {...field}
                                                         InputLabelProps={{
                                                             shrink: true,
                                                         }}
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="contained"
+                                                                >
+                                                                    Submit
+                                                                </Button>
+                                                            ),
+                                                        }}
+                                                        {...field}
                                                     />
                                                 )}
+                                                defaultValue={undefined}
                                             />
-                                            <Button
-                                                type="submit"
-                                                variant="contained"
-                                            >
-                                                Submit
-                                            </Button>
                                         </form>
                                     </Grid>
                                 </Grid>

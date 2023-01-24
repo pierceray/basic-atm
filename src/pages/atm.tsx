@@ -1,7 +1,7 @@
 import {
     DAILY_DEBIT_AMOUNT_LIMIT,
     useCustomerData,
-} from '@/components/CustomerProvider';
+} from '../components/CustomerProvider';
 import { Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
@@ -87,7 +87,6 @@ const Atm = () => {
                                                 control={depositControl}
                                                 render={({ field }) => (
                                                     <TextField
-                                                        id="adornment-depositamount"
                                                         label="Amount to Deposit"
                                                         type="number"
                                                         fullWidth
@@ -134,7 +133,6 @@ const Atm = () => {
                                                 control={debitControl}
                                                 render={({ field }) => (
                                                     <TextField
-                                                        id="adornment-debitamount"
                                                         label="Amount to Withdraw"
                                                         type="number"
                                                         fullWidth

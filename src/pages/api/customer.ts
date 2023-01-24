@@ -1,5 +1,5 @@
-import CustomerRoll from '@/data/CustomerRoll.json';
-import { CustomerType } from '@/types';
+import CustomerRoll from '../../data/CustomerRoll.json';
+import { CustomerType } from '../../types';
 
 export default async function handler(req: any, res: any) {
     const currentCustomer = CustomerRoll.find(

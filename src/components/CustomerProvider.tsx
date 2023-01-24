@@ -1,19 +1,19 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { CustomerType, type ITransaction } from '@/types';
-import CustomerLedger from '@/data/CustomerLedger.json';
+import React, { createContext, useContext, useState } from 'react';
+import { CustomerType, type ITransaction } from '../types';
+import CustomerLedger from '../data/CustomerLedger.json';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 
 type CustomerInfo = Omit<CustomerType, 'pin'>;
 
-interface CustomerDataProvider extends CustomerInfo {
+interface CustomerDataProvider {
     children: React.ReactNode;
 }
 
 interface CustomerContext extends CustomerInfo {
-    addDeposit: Function;
-    addDebit: Function;
-    getBalance: Function;
+    addDeposit: (amount: number) => void;
+    addDebit: (amount: number) => void;
+    getBalance: () => number;
     isUnderWithdrawalAmountLimit: (amount: number) => boolean;
 }
 
